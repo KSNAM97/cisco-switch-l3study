@@ -110,4 +110,9 @@ cisco-switch-l3study/
 
 [MIT License](./LICENSE)
 
-작성: [KSNAM97](https://github.com/KSNAM97)
+<div align="center">
+
+**작성자**: [KSNAM97](https://github.com/KSNAM97)
+**작성일**: 2026.06  
+
+</div>
