@@ -1,0 +1,175 @@
+! ============================================================
+!  Lab 02. SVI + VTP + OSPF  (Preconfig)
+!  VTP     : domain SOL / password Sol1234
+!            SW1 = Server , SW2 / SW3 = Client
+!  Gateway : SVI (interface vlan)
+!  Routing : OSPF process 1 / area 0 / passive-interface default
+! ============================================================
+!
+!
+! ############################################################
+! #  SW1  (VTP Server)
+! ############################################################
+en
+conf t
+!
+! ===== STEP 1. Trunk + VTP =====
+interface gi0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+exit
+!
+vlan 11-14
+!
+vtp domain SOL
+vtp password Sol1234
+vtp mode server
+!
+! ===== STEP 2. Trunk Allowed VLAN + Access =====
+int gi0/0
+ switchport mode trunk
+ switchport trunk allowed vlan 12
+!
+int range gi3/2-3
+ switchport mode access
+ switchport access vlan 11
+!
+! ===== STEP 3. ip routing + SVI (Gateway) =====
+ip routing
+!
+int vlan11
+ ip address 13.13.11.1 255.255.255.0
+ no sh
+!
+int vlan12
+ ip address 13.13.12.1 255.255.255.0
+ no sh
+!
+! ===== STEP 4. Loopback =====
+int loopback 0
+ ip address 13.13.1.1 255.255.255.0
+!
+! ===== STEP 5. OSPF =====
+router ospf 1
+ router-id 1.1.1.1
+ passive-interface default
+ no passive-interface vlan12
+ network 13.13.11.0 0.0.0.255 area 0
+ network 13.13.12.0 0.0.0.255 area 0
+ network 13.13.1.0 0.0.0.255 area 0
+!
+end
+!
+!
+! ############################################################
+! #  SW2  (VTP Client)
+! ############################################################
+en
+conf t
+!
+! ===== STEP 1. Trunk + VTP =====
+interface range gi0/0-1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+exit
+!
+vtp domain SOL
+vtp password Sol1234
+vtp mode client
+!
+! ===== STEP 2. Trunk Allowed VLAN =====
+int range gi0/0-1
+ switchport mode trunk
+ switchport trunk allowed vlan 12,13
+!
+! ===== STEP 3. ip routing + SVI (Gateway) =====
+ip routing
+!
+int vlan12
+ ip address 13.13.12.2 255.255.255.0
+ no sh
+!
+int vlan13
+ ip address 13.13.13.2 255.255.255.0
+ no sh
+!
+! ===== STEP 4. Loopback =====
+int loopback 0
+ ip address 13.13.2.2 255.255.255.0
+!
+! ===== STEP 5. OSPF =====
+router ospf 1
+ router-id 2.2.2.2
+ passive-interface default
+ no passive-interface vlan12
+ no passive-interface vlan13
+ network 13.13.13.0 0.0.0.255 area 0
+ network 13.13.12.0 0.0.0.255 area 0
+ network 13.13.2.0 0.0.0.255 area 0
+!
+end
+!
+!
+! ############################################################
+! #  SW3  (VTP Client)
+! ############################################################
+en
+conf t
+!
+! ===== STEP 1. Trunk + VTP =====
+interface range gi0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+exit
+!
+vtp domain SOL
+vtp password Sol1234
+vtp mode client
+!
+! ===== STEP 2. Trunk Allowed VLAN + Access =====
+int gi0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 13
+!
+int range gi3/2-3
+ switchport mode access
+ switchport access vlan 14
+!
+! ===== STEP 3. ip routing + SVI (Gateway) =====
+ip routing
+!
+int vlan13
+ ip address 13.13.13.3 255.255.255.0
+ no sh
+!
+int vlan14
+ ip address 13.13.14.1 255.255.255.0
+ no sh
+!
+! ===== STEP 4. Loopback =====
+int loopback 0
+ ip address 13.13.3.3 255.255.255.0
+!
+! ===== STEP 5. OSPF =====
+router ospf 1
+ router-id 3.3.3.3
+ passive-interface default
+ no passive-interface vlan13
+ network 13.13.13.0 0.0.0.255 area 0
+ network 13.13.14.0 0.0.0.255 area 0
+ network 13.13.3.0 0.0.0.255 area 0
+!
+end
+!
+!
+! ============================================================
+!  Verify
+!   show vtp status              ( Server / Client , VLAN 11-14 sync )
+!   show interfaces trunk        ( allowed vlan )
+!   show ip ospf neighbor        ( FULL = OK )
+!   show ip route                ( O = OSPF )
+!   show ip ospf interface brief
+! ============================================================
