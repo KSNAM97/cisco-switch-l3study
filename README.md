@@ -94,7 +94,7 @@ cisco-switch-l3study/
 | 도구 | 용도 |
 | --- | --- |
 | **GNS3** | 토폴로지 구성 및 시뮬레이션 |
-| **Cisco IOSvL2 / 3560 / 3650** | L3 Switch 이미지 |
+| **Cisco IOSvL2** | L3 Switch 이미지 |
 | **Cisco Packet Tracer** | 간편 실습 |
 | **MobaXterm** | 콘솔 접속 |
 | **Git / GitHub** | 버전 관리 |
