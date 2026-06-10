@@ -1,0 +1,46 @@
+! ===== SW2 : VTP Client =====
+en
+conf t
+!
+! --- Trunk + VTP ---
+interface range gi0/0-1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+exit
+!
+vtp domain SOL
+vtp password Sol1234
+vtp mode client
+!
+! --- Trunk Allowed VLAN ---
+int range gi0/0-1
+ switchport mode trunk
+ switchport trunk allowed vlan 12,13
+!
+! --- ip routing + SVI ---
+ip routing
+!
+int vlan12
+ ip address 13.13.12.2 255.255.255.0
+ no sh
+!
+int vlan13
+ ip address 13.13.13.2 255.255.255.0
+ no sh
+!
+! --- Loopback ---
+int loopback 0
+ ip address 13.13.2.2 255.255.255.0
+!
+! --- OSPF ---
+router ospf 1
+ router-id 2.2.2.2
+ passive-interface default
+ no passive-interface vlan12
+ no passive-interface vlan13
+ network 13.13.13.0 0.0.0.255 area 0
+ network 13.13.12.0 0.0.0.255 area 0
+ network 13.13.2.0 0.0.0.255 area 0
+!
+end
