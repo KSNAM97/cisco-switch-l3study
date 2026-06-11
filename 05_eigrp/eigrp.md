@@ -96,3 +96,7 @@ EIGRP 학습 경로는 라우팅 테이블에 `D` 코드로 표시된다.
 - `no auto-summary`로 서브넷 그대로 광고
 - `network` + Wildcard Mask로 광고 네트워크 지정
 - 라우팅 테이블에 `D`로 표시
+
+---
+
+⬅️ 이전: [04. Inter-VLAN Routing](../04_inter-vlan/inter-vlan.md) | 🏠 [README](../README.md) | ➡️ 다음: [06. OSPF](../06_ospf/ospf.md)
